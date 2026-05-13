@@ -3,6 +3,13 @@ pipeline {
 
     stages {
 
+        stage('Checkout SCM') {
+            steps {
+                git branch: 'main',
+                url: 'https://github.com/sushant-m1/spring-k8s-app.git'
+            }
+        }
+
         stage('Build Maven') {
             steps {
                 sh 'chmod +x mvnw'
@@ -12,13 +19,17 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'eval $(minikube docker-env) && docker build -t springapp:v1 .'
+                sh '''
+                docker build -t springapp:v1 .
+                '''
             }
         }
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh 'kubectl apply -f springapp.yaml'
+                sh '''
+                kubectl apply -f springapp.yaml
+                '''
             }
         }
 
