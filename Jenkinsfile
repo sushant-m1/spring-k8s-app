@@ -3,14 +3,9 @@ pipeline {
 
     stages {
 
-        stage('Clone Code') {
-            steps {
-                git 'https://github.com/sushant-m1/spring-k8s-app.git'
-            }
-        }
-
         stage('Build Maven') {
             steps {
+                sh 'chmod +x mvnw'
                 sh './mvnw clean package'
             }
         }
