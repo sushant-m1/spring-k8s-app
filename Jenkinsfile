@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        KUBECONFIG = '/var/lib/jenkins/.kube/config'
+    }
+
     stages {
 
         stage('Checkout SCM') {
@@ -19,17 +23,13 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh '''
-                docker build -t springapp:v1 .
-                '''
+                sh 'docker build -t springapp:v1 .'
             }
         }
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh '''
-                kubectl apply -f springapp.yaml
-                '''
+                sh 'kubectl apply -f springapp.yaml'
             }
         }
 
