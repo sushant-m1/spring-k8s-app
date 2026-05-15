@@ -7,36 +7,20 @@ pipeline {
 
     stages {
 
-        stage('Checkout SCM') {
+        stage('Run Ansible Kubernetes Playbook') {
             steps {
-                git branch: 'main',
-                url: 'https://github.com/sushant-m1/spring-k8s-app.git'
+                sh '''
+                ansible-playbook \
+                -i /home/innuser009/ansible-lab/inventory \
+                /home/innuser009/ansible-lab/nginx-k8s.yml
+                '''
             }
         }
 
-        stage('Build Maven') {
+        stage('Verify Kubernetes Deployment') {
             steps {
-                sh 'chmod +x mvnw'
-                sh './mvnw clean package'
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                sh 'docker build -t springapp:v1 .'
-            }
-        }
-
-        stage('Deploy to Kubernetes') {
-            steps {
-                sh 'kubectl apply -f springapp.yaml'
-            }
-        }
-
-        stage('Verify Deployment') {
-            steps {
-                sh 'kubectl get pods'
-                sh 'kubectl get svc'
+                sh 'kubectl get pods -n ansible-demo'
+                sh 'kubectl get svc -n ansible-demo'
             }
         }
     }
